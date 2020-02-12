@@ -1,0 +1,23 @@
+[package]
+name = "rs_fec_conv"
+version = "0.1.0"
+authors = ["broep"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+#rayon = "1.0.2"
+numpy = "0.7.0"
+ndarray = "0.13"
+special-fun = "0.2.0"
+factorial = "0.2.0"
+
+[dependencies.pyo3]
+version = "0.8.5"
+default-features = false
+
+[lib]
+name = "rs_fec_conv"
+crate-type = ["cdylib"]
+

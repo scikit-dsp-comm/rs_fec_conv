@@ -1,0 +1,20 @@
+.. rs_fec_conv documentation master file, created by
+   sphinx-quickstart on Tue Feb 11 16:42:07 2020.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to rs_fec_conv's documentation!
+=======================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   
+   download_rust.rst
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
