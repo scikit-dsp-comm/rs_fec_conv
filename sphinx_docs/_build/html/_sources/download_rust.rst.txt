@@ -7,6 +7,14 @@ Getting started
 
 .. _installing-Rust:
 
+...Installing Rust
+.. ===============
+..
+.. You can download Rust from `Rust <https://www.rust-lang.org/tools/install>`_.
+.. Rust can also be downloaded using Windows Subsystem for Linux by doing::
+..
+.. curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+..
 Installing Rust
 ===============
 
@@ -14,6 +22,7 @@ You can download Rust from `Rust <https://www.rust-lang.org/tools/install>`_.
 Rust can also be downloaded using Windows Subsystem for Linux by doing::
 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 
 .. _Tutorial:
 

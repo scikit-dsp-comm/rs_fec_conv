@@ -10,11 +10,5 @@ Welcome to rs_fec_conv's documentation!
    :maxdepth: 2
    :caption: Contents:
    
-   download_rust.rst
+   online_docs.rst
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

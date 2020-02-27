@@ -706,8 +706,13 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     /// -------
     /// y: Decoded 0/1 bit stream
 	///
-	fn viterbi_decoder(input: ArrayViewD<f64>, metric_type: String, quant_level: usize, g: ArrayViewD<f64>, depth: usize) -> (Vec<f64>, Vec<Vec<f64>>, Vec<Vec<f64>>, Vec<Vec<f64>>) {	
+	fn viterbi_decoder(input: ArrayViewD<f64>, metric_type: String, quant_level: usize, g: ArrayViewD<f64>, depth: usize) -> Vec<f64> {	
 	// Viterbi Decode a signal with 1/2 or 1/3 rate encoding
+		
+		/*
+		if metric_type == "hard" {
+		}
+		*/
 		
 		// Initialize values
 		let g1 = &g * 1.0;
@@ -913,13 +918,13 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 				}	
 			}
 			
-			// Output data
 			if i >= (symbol_l * depth - symbol_l) {
 				output.push(paths_traceback_bits[min_idx as usize][(depth - 1) as usize]);
 			}
 		}
 		
-		return (output, paths_cum_metrics, paths_traceback_states, paths_traceback_bits)
+		//return output
+		return output
 		
 	}
 	
@@ -947,17 +952,16 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     /// y: Decoded 0/1 bit stream
 	///
 	#[pyfn(m, "viterbi_decoder")]
-	fn viterbi_decoder_py(_py: Python, input: &PyArrayDyn<f64>, metric_type: String, quant_level: usize, g: &PyArrayDyn<f64>, depth: usize) -> (Vec<f64>, Vec<Vec<f64>>, Vec<Vec<f64>>, Vec<Vec<f64>>) {		
+	fn viterbi_decoder_py(_py: Python, input: &PyArrayDyn<f64>, metric_type: String, quant_level: usize, g: &PyArrayDyn<f64>, depth: usize) -> Vec<f64> {		
 	// Viterbi Decode a signal with 1/2 or 1/3 rate encoding
 		let input = input.as_array();
 		let g = g.as_array();
 
 		// Pass parameters to viterbi decoder
-		let (output, paths_cum_metrics, paths_traceback_states, paths_traceback_bits) = 
-			viterbi_decoder(input, metric_type, quant_level, g, depth);
+		let output = viterbi_decoder(input, metric_type, quant_level, g, depth);
 		
 		//return output_out
-		return (output, paths_cum_metrics, paths_traceback_states, paths_traceback_bits)
+		return output
 	}
 	
 	

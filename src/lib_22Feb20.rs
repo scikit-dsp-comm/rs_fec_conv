@@ -1,12 +1,11 @@
 extern crate pyo3;
 extern crate special_fun;
 extern crate factorial;
-extern crate array2d;
 extern crate transpose;
 //extern crate simple_error;
 
-//use ndarray::{Array, ArrayD, ArrayViewD, ArrayViewMutD, s};
-use ndarray::{ArrayD, ArrayViewD};
+use ndarray::{Array, ArrayD, ArrayViewD, ArrayViewMutD, s};
+//use ndarray::{ArrayD, ArrayViewD};
 //use numpy::{IntoPyArray, PyArrayDyn};
 use numpy::*;
 use pyo3::prelude::*;
@@ -19,13 +18,6 @@ use factorial::Factorial;
 //use pyo3::PyClassShell;
 //use std::error::Error;
 //use std::cmp;
-//use std::path::PathBuf;
-//use rayon::prelude::*;
-//use std::fs;
-use array2d::Array2D;
-
-
-
 
 #[pymodule]
 fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
@@ -320,15 +312,27 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 	/// output: Encoded signal of length len(input) * len(G) (np.array([float, float, ...]))
 	/// state: Output state (String)
 	///
-	fn conv_encoder(input: ArrayViewD<f64>, state: String, g: ArrayViewD<f64>) -> (Vec<f64>, String) {	
+	fn conv_encoder(input: ArrayViewD<f64>, state: String, g: ArrayViewD<f64>, output: ArrayViewD<f64>, _depth: usize) -> (ArrayD<f64>, String) {	
 		
 		// Convolutionally encode a signal with 1/2 or 1/3 rate encoding
-		let mut output = vec![];
+		let mut output_out = &output * 0.0;
 		let mut state_out = state;
 		let state_len = state_out.len();
-		let input1 = &input * 1.0;
+		let mut input1 = &input * 1.0;
 		let g1 = &g * 1.0;
 		
+		/*
+		// Get length of output
+		let mut out_len = 0;
+		if rate == (1.0/2.0) {
+			out_len = 2 * input1.len() as usize;
+		}
+		else if rate == (1.0/3.0) {
+			out_len = 3 * input1.len() as usize;
+		}
+		let output_temp = vec![0.0; out_len];
+		let mut output = Array::from_vec(output_temp);
+		*/
 		
 		// Initialize values
 		let constraint_length = binaryf(g1[0]).len();
@@ -336,14 +340,15 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 		
 		// 1/2 rate encoding
 		if g1.len() == 2 {
-			for (_i, elem_i) in input1.iter().enumerate() {
+			let mut counter = 0;
+			for (_i, elem_i) in input1.iter_mut().enumerate() {
 				let mut u1 = *elem_i as i32;
 				let mut u2 = *elem_i as i32;
 				
 				// XOR G1 and G2
 				for j in 1..constraint_length {
 					// XOR G1 with current state
-					let g10_s = &binaryf(g1[0])[j..(j+1)];
+					let g10_s= &binaryf(g1[0])[j..(j+1)];
 					let g10: i32 = g10_s.trim().parse().unwrap();
 					if g10 == 1 {
 						let u1_temp_s = &state_out[(j-1)..j];
@@ -362,15 +367,18 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 				}
 				
 				// G1 first, G2 second
-				output.push(u1.into());
-				output.push(u2.into());
+				output_out[counter] = u1.into();
+				counter += 1;
+				output_out[counter] = u2.into();
+				counter += 1;
 				state_out = binaryf(*elem_i) + &state_out[..(state_len-1)];	
 			}
 		}
 		
 		// 1/3 rate encoding
 		else if g1.len() == 3 {
-			for (_i, elem_i) in input1.iter().enumerate() {
+			let mut counter = 0;
+			for (_i, elem_i) in input1.iter_mut().enumerate() {
 				let mut u1 = *elem_i as i32;
 				let temp_g0_s = &binaryf(g1[0])[0..1];
 				let temp_g0: i32 = temp_g0_s.trim().parse().unwrap();
@@ -423,9 +431,12 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 				}
 				
 				// G1 first, G2 second, G3 third
-				output.push(u1.into());
-				output.push(u2.into());
-				output.push(u3.into());
+				output_out[counter] = u1.into();
+				counter += 1;
+				output_out[counter] = u2.into();
+				counter += 1;
+				output_out[counter] = u3.into();
+				counter += 1;
 				state_out = binaryf(*elem_i) + &state_out[..(state_len-1)];	
 			}
 		}
@@ -437,7 +448,7 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 		}
 
 		//return state_out
-		return (output, state_out)
+		return (output_out, state_out)
 			
 	}
 	
@@ -477,18 +488,17 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 	///
 	#[pyfn(m, "conv_encoder")]
 	//fn conv_encoder_py(py: Python, input: &PyArrayDyn<f64>, state: String, rate: f64, g: &PyArrayDyn<f64>, depth: usize) -> (Py<PyArrayDyn<f64>>, String) {	
-	//fn conv_encoder_py(py: Python, input: &PyArrayDyn<f64>, state: String, g: &PyArrayDyn<f64>, output: &PyArrayDyn<f64>, depth: usize) -> (Py<PyArrayDyn<f64>>, String) {	
-	fn conv_encoder_py(_py: Python, input: &PyArrayDyn<f64>, state: String, g: &PyArrayDyn<f64>) -> (Vec<f64>, String) {
+	fn conv_encoder_py(py: Python, input: &PyArrayDyn<f64>, state: String, g: &PyArrayDyn<f64>, output: &PyArrayDyn<f64>, depth: usize) -> (Py<PyArrayDyn<f64>>, String) {	
 		// Convolutionally encode a signal with 1/2 or 1/3 rate encoding
 		let input = input.as_array();
 		let g = g.as_array();
-		//let output = output.as_array();
+		let output = output.as_array();
 
 		// Pass parameters to conv_encoder
-		let (output, state_out) = conv_encoder(input, state, g);
-		//let output_out = output_temp.into_pyarray(py).to_owned();
+		let (output_temp, state_out) = conv_encoder(input, state, g, output, depth);
+		let output_out = output_temp.into_pyarray(py).to_owned();
 		
-		return (output, state_out)
+		return (output_out, state_out)
 	}
 	
 	fn conv_encoder2(input: &Vec<f64>, state: String, g: &ArrayViewD<f64>) -> (Vec<f64>, String) {	
@@ -706,28 +716,35 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     /// -------
     /// y: Decoded 0/1 bit stream
 	///
-	fn viterbi_decoder(input: ArrayViewD<f64>, metric_type: String, quant_level: usize, g: ArrayViewD<f64>, depth: usize) -> (Vec<f64>, Vec<Vec<f64>>, Vec<Vec<f64>>, Vec<Vec<f64>>) {	
-	// Viterbi Decode a signal with 1/2 or 1/3 rate encoding
+	fn viterbi_decoder(input: ArrayViewD<f64>, metric_type: String, quant_level: usize, g: ArrayViewD<f64>, output: ArrayViewD<f64>, depth: usize) -> ArrayD<f64> {	
+		// Viterbi Decode a signal with 1/2 or 1/3 rate encoding
+		
+		/*
+		if metric_type == "hard" {
+		}
+		*/
 		
 		// Initialize values
 		let g1 = &g * 1.0;
 		let constraint_length = binaryf(g1[0]).len();
 		let n_states = 2_i32.pow(constraint_length as u32 - 1);
-
+		let cm_present = vec![0; n_states as usize];
+		
 		// Number of channel symbols to process
 		// Even for rate 1/2
 		// Multiple of 3 for rate 1/3
-		let input1 = &input * 1.0;
+		let mut input1 = &input * 1.0;
 		let ns = input1.len();
 		
 		// Decoded bit sequence
-		let mut output = vec![];
+		let mut output_out = &output * 1.0;
+		let mut k = 0;
 		let symbol_l = g1.len();
 		
 		// Initialize trellis paths
-		let mut paths_cum_metrics = vec![vec![0.0; depth]; n_states as usize];
-		let mut paths_traceback_states = vec![vec![0.0; depth]; n_states as usize];
-		let mut paths_traceback_bits = vec![vec![0.0; depth]; n_states as usize];
+		let mut trellis_paths = vec![0.0; ns * depth];
+		let mut trellis_paths_transpose = vec![0.0; ns * depth];
+		transpose::transpose(&trellis_paths, &mut trellis_paths_transpose, ns, depth);
 
 		// Initialize trellis nodes
 		let mut fn_0 = vec![0.0; n_states as usize];
@@ -800,41 +817,25 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 				branches_states2[i as usize] = fn_1[match_one_idx[1]];
 				branches_bits1[i as usize] = out_bits_1[match_one_idx[0]];
 				branches_bits2[i as usize] = out_bits_1[match_one_idx[1]];
-				branches_input1[i as usize] = 1.0;
-				branches_input2[i as usize] = 1.0;
+				branches_input1[i as usize] = 0.0;
+				branches_input2[i as usize] = 0.0;
 			}
 			else {
 				// error statement
 			}
 		}
 		
+		
 		// Calculate branch metrics and update traceback state and bits
-		let mut cm_past = vec![0.0; n_states as usize];
-		let mut tb_states_temp = vec![vec![0.0; depth - 1]; n_states as usize];
-		let mut tb_bits_temp = vec![vec![0.0; depth - 1]; n_states as usize];
-	
 		for i in (0..ns).step_by(symbol_l) {
-			let mut cm_present = vec![0.0; n_states as usize];
-			
-			// Get column vectors
-			let paths_cum_metrics_array = Array2D::from_rows(&paths_cum_metrics);
-			for (j, elem_j) in paths_cum_metrics_array.column_iter(0).enumerate() {
-				cm_past[j as usize] = *elem_j ;
-			}
-			
-			let paths_traceback_states_array = Array2D::from_rows(&paths_traceback_states);
-			for j in 0..(depth - 1) {
-				for (k, elem_k) in paths_traceback_states_array.column_iter(j).enumerate() {
-					tb_states_temp[k as usize][j as usize] = *elem_k;
-				}
-			}
-			
-			let paths_traceback_bits_array = Array2D::from_rows(&paths_traceback_bits);
-			for j in 0..(depth - 1) {
-				for (k, elem_k) in paths_traceback_bits_array.column_iter(j).enumerate() {
-					tb_bits_temp[k as usize][j as usize] = *elem_k;
-				}
-			}
+			println!("i = {}", i);
+			let cm_past = &trellis_paths_transpose[..ns];
+			let tb_states_temp = &trellis_paths_transpose[ns..];
+			let tb_bits_temp = &trellis_paths_transpose[ns..];
+			println!("{:?}", cm_past);
+			println!("{:?}", tb_states_temp);
+			println!("{:?}", tb_bits_temp);
+			println!("");
 			
 			for j in 0..n_states {
 				let mut input_arr = vec![0.0; symbol_l];
@@ -843,83 +844,35 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
 					input_arr[k_counter] = input1[k];
 					k_counter += 1;
 				}
-				
-				// Calculate branch metrics
-				let mut d1 = bm_calc(branches_bits1[j as usize], &input_arr, &metric_type, quant_level, g1.len());
+				let mut d1 = bm_calc(branches_bits1[j as usize], &	input_arr, &metric_type, quant_level, g1.len());
 				d1 += cm_past[branches_states1[j as usize] as usize];
-				let mut d2 = bm_calc(branches_bits2[j as usize], &input_arr, &metric_type, quant_level, g1.len());
+				let mut d2 = bm_calc(branches_bits2[j as usize], &	input_arr, &metric_type, quant_level, g1.len());
 				d2 += cm_past[branches_states2[j as usize] as usize];
+				//println!("d1 = {}", d1);
+				//println!("d2 = {}", d2);
+				//println!("");
 				
 				// Find the survivor assuming minimum distance wins
 				if d1 <= d2 {
 					cm_present[j as usize] = d1;
-
-					paths_traceback_states[j as usize][0] = branches_states1[j as usize];
-					for k in 1..depth {
-						let x = branches_states1[j as usize];
-						paths_traceback_states[j as usize][k as usize] = tb_states_temp[x as usize][(k - 1) as usize];
-					}
-
-					paths_traceback_bits[j as usize][0] = branches_input1[j as usize];
-					for k in 1..depth {
-						let x = branches_states1[j as usize];
-						paths_traceback_bits[j as usize][k as usize] = tb_bits_temp[x as usize][(k - 1) as usize];
-					}	
-				}
-
-				// d2 < d1
-				else {
-					cm_present[j as usize] = d2;
 					
-					paths_traceback_states[j as usize][0] = branches_states2[j as usize];
-					for k in 1..depth {
-						let x = branches_states2[j as usize];
-						paths_traceback_states[j as usize][k as usize] = tb_states_temp[x as usize][(k - 1) as usize];
-					}
-					
-					paths_traceback_bits[j as usize][0] = branches_input2[j as usize];
-					for k in 1..depth {
-						let x = branches_states2[j as usize];
-						paths_traceback_bits[j as usize][k as usize] = tb_bits_temp[x as usize][(k - 1) as usize];
-					}
+				
 				}
+				
+			
 			}
 			
-			// Update cumulative metric history
-			for j in 0..n_states {
-				for k in (1..depth).rev() {
-					paths_cum_metrics[j as usize][k as usize] = paths_cum_metrics[j as usize][(k - 1) as usize];
-				}
-				paths_cum_metrics[j as usize][0] = cm_present[j as usize];
-			}
-			
-			// Obtain estimate of input bit sequency from the oldest bit in
-			// the traceback having the smallest (most likely) cumulative metric
-			let mut min_metric_vec = vec![0; n_states as usize];
-			
-			let min_metric_array = Array2D::from_rows(&paths_cum_metrics);
-			for (j, elem_j) in min_metric_array.column_iter(0).enumerate() {
-				min_metric_vec[j as usize] = *elem_j as i32;
-			}
-			let min_metric = min_metric_vec.iter().min().unwrap();
-			
-			// Get first occurrence of min metric
-			let mut min_idx = 0;
-			for j in 0..n_states {
-			
-				if min_metric_vec[j as usize] == *min_metric {
-					min_idx = j;
-					break;
-				}	
-			}
-			
-			// Output data
-			if i >= (symbol_l * depth - symbol_l) {
-				output.push(paths_traceback_bits[min_idx as usize][(depth - 1) as usize]);
-			}
 		}
 		
-		return (output, paths_cum_metrics, paths_traceback_states, paths_traceback_bits)
+		
+		
+		
+		
+		
+		
+		
+		
+		return output_out
 		
 	}
 	
@@ -947,33 +900,17 @@ fn rs_fec_conv(_py: Python<'_>, m: &PyModule) -> PyResult<()> {
     /// y: Decoded 0/1 bit stream
 	///
 	#[pyfn(m, "viterbi_decoder")]
-	fn viterbi_decoder_py(_py: Python, input: &PyArrayDyn<f64>, metric_type: String, quant_level: usize, g: &PyArrayDyn<f64>, depth: usize) -> (Vec<f64>, Vec<Vec<f64>>, Vec<Vec<f64>>, Vec<Vec<f64>>) {		
-	// Viterbi Decode a signal with 1/2 or 1/3 rate encoding
+	fn viterbi_decoder_py(py: Python, input: &PyArrayDyn<f64>, metric_type: String, quant_level: usize, g: &PyArrayDyn<f64>, output: &PyArrayDyn<f64>, depth: usize) -> Py<PyArrayDyn<f64>> {	
+		// Viterbi Decode a signal with 1/2 or 1/3 rate encoding
 		let input = input.as_array();
 		let g = g.as_array();
+		let output = output.as_array();
 
-		// Pass parameters to viterbi decoder
-		let (output, paths_cum_metrics, paths_traceback_states, paths_traceback_bits) = 
-			viterbi_decoder(input, metric_type, quant_level, g, depth);
+		// Pass parameters to conv_encoder
+		let output_out = viterbi_decoder(input, metric_type, quant_level, g, output, depth).into_pyarray(py).to_owned();
 		
-		//return output_out
-		return (output, paths_cum_metrics, paths_traceback_states, paths_traceback_bits)
+		return output_out
 	}
-	
-	
-	/// obj
-	#[pyfn(m, "rust_obj")]
-	fn rust_obj_py(py: Python, x: PyObject) -> PyResult<PyObject> {	
-		let y = x.clone_ref(py);
-		//y.a += 2;
-		println!("{:?}", y);
-		println!("{:?}", y.getattr(py, "paths"));
-		Ok(y)
-	}
-	
-	
-	
-	
 	
 
 
