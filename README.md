@@ -1,7 +1,7 @@
 # rs_fec_conv
 
-[![pypi](https://img.shields.io/pypi/v/scikit-dsp-comm.svg)](https://pypi.python.org/pypi/scikit-dsp-comm)
-[![Docs](https://readthedocs.org/projects/scikit-dsp-comm/badge/?version=latest)](http://scikit-dsp-comm.readthedocs.io/en/latest/?badge=latest)
+[![PyPi](https://img.shields.io/pypi/v/rs_fec_conv.svg?style=flat-square)](https://pypi.org/project/rs_fec_conv/)
+[![Docs](https://readthedocs.org/projects/rs_fec_conv/badge/?version=latest)](http://rs_fec_conv.readthedocs.io/en/latest/?badge=latest)
 
 ## Getting Started
 The package rs_fec_conv is a rust binding built with [pyo3](https://github.com/PyO3/pyo3).
@@ -20,8 +20,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ### Package Requirements
 This package requires Python 3.7.x.
 
-### rs_fec_conv install
-You can download the package rs_fec_conv from PiPy [PiPy](https://www.rust-lang.org/tools/install),
+### rs_fec_conv Install
+You can download the package rs_fec_conv from PyPi [PyPi](https://pypi.org/project/rs_fec_conv/),
 or by the command
 ```bash
 pip install rs_fec_conv
