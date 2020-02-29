@@ -73,7 +73,7 @@ tight_layout()
 savefig('conv_enc.png')
 ```
 
-![Convolutionally Encoded Signal](conv_enc.png)
+![Convolutionally Encoded Signal](https://github.com/grayfox57/rs_fec_conv/blob/master/conv_enc.png)
 
 ### Viterbi Decoder
 The function viterbi_decoder_rs can be implemented by
@@ -100,7 +100,7 @@ tight_layout()
 savefig('viterbi_dec.png')
 ```
 
-![Viterbi Decoded Signal](viterbi_dec.png)
+![Viterbi Decoded Signal](https://github.com/grayfox57/rs_fec_conv/blob/master/viterbi_dec.png)
 
 Since there is no channel noise added to the signal the Viterbi decoded signal results
 in no bit errors from the original signal.   
