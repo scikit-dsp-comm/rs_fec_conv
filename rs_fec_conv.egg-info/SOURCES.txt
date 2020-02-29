@@ -1,5 +1,8 @@
 setup.py
 rs_fec_conv/__init__.py
+rs_fec_conv/digitalcom.py
+rs_fec_conv/fec_conv.py
+rs_fec_conv/sigsys.py
 rs_fec_conv.egg-info/PKG-INFO
 rs_fec_conv.egg-info/SOURCES.txt
 rs_fec_conv.egg-info/dependency_links.txt

@@ -71,7 +71,9 @@ tests_require = install_requires + ["pytest", "pytest-benchmark"]
 
 setup(
     name="rs_fec_conv",
-    version="0.1.0",
+    version="0.2.0",
+	author="Benjamin Roepken",
+	author_email="broepken57@hotmail.com",
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Development Status :: 3 - Alpha",

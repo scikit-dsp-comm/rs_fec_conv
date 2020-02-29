@@ -1,10 +1,15 @@
 [package]
 name = "rs_fec_conv"
-version = "0.1.0"
-authors = ["broep"]
+version = "0.2.7"
+authors = ["Benjamin Roepken <broepken57@hotmail.com>"]
 edition = "2018"
+description="Convolutional Encoder and Viterbi Decoder built with Rust bindings for integration with Python"
+readme="README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package.metadata.maturin]
+requires-dist = []
 
 [dependencies]
 rayon = "1.0.2"
@@ -17,7 +22,8 @@ array2d = "0.2.1"
 
 [dependencies.pyo3]
 version = "0.8.5"
-default-features = false
+features = ["extension-module"]
+# default-features = false
 
 [lib]
 name = "rs_fec_conv"
