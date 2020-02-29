@@ -37,7 +37,7 @@ or by the command::
   conda install rs_fec_conv
   
 Note: The preferred method is to download from either PyPi or conda. 
-If downloading directly from GitHub you will need to install prior.
+If downloading directly from GitHub you will need to install Rust prior.
 
 .. _Tutorial:
 
