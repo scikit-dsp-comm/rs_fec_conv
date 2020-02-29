@@ -497,7 +497,7 @@ class fec_conv(object):
         --------
         >>> import numpy as np
         >>> from numpy.random import randint
-        >>> import sk_dsp_comm.fec_conv as fec
+        >>> import rs_fec_conv.fec_conv as fec
         >>> import sk_dsp_comm.digitalcom as dc
         >>> import matplotlib.pyplot as plt
         >>> # Soft decision rate 1/2 simulation
@@ -511,11 +511,11 @@ class fec_conv(object):
         >>> while total_bit_errors < 100:
         >>>     # Create 100000 random 0/1 bits
         >>>     x = randint(0,2,N_bits_per_frame)
-        >>>     y,state = cc1.conv_encoder(x,state)
+        >>>     y,state = cc1.conv_encoder_rs(x,state)
         >>>     # Add channel noise to bits, include antipodal level shift to [-1,1]
         >>>     yn_soft = dc.cpx_AWGN(2*y-1,EbN0-3,1) # Channel SNR is 3 dB less for rate 1/2
         >>>     yn_hard = ((np.sign(yn_soft.real)+1)/2).astype(int)
-        >>>     z = cc1.viterbi_decoder(yn_hard,'hard')
+        >>>     z = cc1.viterbi_decoder_rs(yn_hard,'hard')
         >>>     # Count bit errors
         >>>     bit_count, bit_errors = dc.bit_errors(x,z)
         >>>     total_bit_errors += bit_errors
@@ -693,7 +693,7 @@ class fec_conv(object):
 
     def conv_encoder_rs(self,input,state):
         """
-        output, state = conv_encoder(input,state)
+        output, state = conv_encoder_rs(input,state)
         We get the 1/2 or 1/3 rate from self.rate
         Polys G1 and G2 are entered as binary strings, e.g,
         G1 = '111' and G2 = '101' for K = 3

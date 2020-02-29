@@ -1,10 +1,11 @@
 [package]
 name = "rs_fec_conv"
-version = "0.2.10"
+version = "0.2.11"
 authors = ["Benjamin Roepken <broepken57@hotmail.com>"]
 edition = "2018"
 description="Convolutional Encoder and Viterbi Decoder built with Rust bindings for integration with Python"
 readme="README.md"
+repository="https://github.com/grayfox57/rs_fec_conv"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
