@@ -1,18 +1,17 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Getting started &#8212; rs_fec_conv  documentation</title>
+    <meta charset="utf-8" />
+    <title>Getting Started &#8212; rs_fec_conv  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Welcome to rs_fec_conv’s documentation!" href="index.html" />
@@ -33,25 +32,32 @@
           <div class="body" role="main">
             
   <div class="section" id="getting-started">
-<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>The package rs_fec_conv is a rust binding built with <a class="reference external" href="https://github.com/PyO3/pyo3">pyo3</a>.
 rs_fec_conv is intended to be used in parallel with the
 <a class="reference external" href="https://github.com/mwickert/scikit-dsp-comm">scikit-dsp-comm</a> package.
 The rust binding improve the processing time of the conv_encoder and viterbi_decoder algorithms.</p>
+<div class="section" id="rust-installing">
+<h2>Rust Installing<a class="headerlink" href="#rust-installing" title="Permalink to this headline">¶</a></h2>
 <p>Rust is not needed on the system to execute the binaries since the functions are already pre-compiled.
 Although, <a class="reference external" href="https://www.rust-lang.org/tools/install">Rust</a>. can be downloaded online or
 installed on Windows Subsystem for Linux by:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curl</span> <span class="o">--</span><span class="n">proto</span> <span class="s1">&#39;=https&#39;</span> <span class="o">--</span><span class="n">tlsv1</span><span class="o">.</span><span class="mi">2</span> <span class="o">-</span><span class="n">sSf</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">sh</span><span class="o">.</span><span class="n">rustup</span><span class="o">.</span><span class="n">rs</span> <span class="o">|</span> <span class="n">sh</span>
 </pre></div>
 </div>
-<div class="section" id="installing-rs-fec-conv">
-<h2>Installing rs_fec_conv<a class="headerlink" href="#installing-rs-fec-conv" title="Permalink to this headline">¶</a></h2>
-<p>You can download the package rs_fec_conv from PiPy <a class="reference external" href="https://www.rust-lang.org/tools/install">PiPy</a>,
+</div>
+<div class="section" id="package-requirements">
+<h2>Package Requirements<a class="headerlink" href="#package-requirements" title="Permalink to this headline">¶</a></h2>
+<p>This package requires Python 3.7.x.</p>
+</div>
+<div class="section" id="rs-fec-conv-install">
+<h2>rs_fec_conv Install<a class="headerlink" href="#rs-fec-conv-install" title="Permalink to this headline">¶</a></h2>
+<p>You can download the package rs_fec_conv from <a class="reference external" href="https://pypi.org/project/rs_fec_conv">PyPi</a>,
 or by the command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">rs_fec_conv</span>
 </pre></div>
 </div>
-<p>The rs_fec_package can also be downloaded from conda <a class="reference external" href="https://www.rust-lang.org/tools/install">conda</a>,
+<p>The rs_fec_package can also be downloaded from <a class="reference external" href="https://www.rust-lang.org/tools/install">conda</a>,
 or by the command:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">conda</span> <span class="n">install</span> <span class="n">rs_fec_conv</span>
 </pre></div>
@@ -59,6 +65,8 @@ or by the command:</p>
 </div>
 <div class="section" id="tutorial">
 <span id="id2"></span><h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="convolutional-encoder">
+<h3>Convolutional Encoder<a class="headerlink" href="#convolutional-encoder" title="Permalink to this headline">¶</a></h3>
 <p>The function conv_encoder_rs can be implemented by:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -96,8 +104,11 @@ or by the command:</p>
 </div>
 <div class="figure align-center" id="id3">
 <img alt="_images/conv_enc.png" src="_images/conv_enc.png" />
-<p class="caption"><span class="caption-text">Convolutionally Encoded Signal</span></p>
+<p class="caption"><span class="caption-text">Convolutionally Encoded Signal</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
+</div>
+<div class="section" id="viterbi-decoder">
+<h3>Viterbi Decoder<a class="headerlink" href="#viterbi-decoder" title="Permalink to this headline">¶</a></h3>
 <p>The function viterbi_decoder_rs can be implemented by:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Viterbi decode</span>
 <span class="n">z</span> <span class="o">=</span> <span class="n">cc1</span><span class="o">.</span><span class="n">viterbi_decoder_rs</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="s1">&#39;hard&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
@@ -123,10 +134,13 @@ or by the command:</p>
 </div>
 <div class="figure align-center" id="id4">
 <img alt="_images/viterbi_dec.png" src="_images/viterbi_dec.png" />
-<p class="caption"><span class="caption-text">Viterbi Decoded Signal</span></p>
+<p class="caption"><span class="caption-text">Viterbi Decoded Signal</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
 </div>
 <p>Since there is no channel noise added to the signal the Viterbi decoded signal results
 in no bit errors from the original signal.</p>
+</div>
+<div class="section" id="channel-simulation">
+<h3>Channel Simulation<a class="headerlink" href="#channel-simulation" title="Permalink to this headline">¶</a></h3>
 <p>A simulation using AWGN can be done using by integrating with other functions provided
 in the scikit-dsp-comm toolbox:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Soft decision rate 1/2 simulation</span>
@@ -170,6 +184,7 @@ in the scikit-dsp-comm toolbox:</p>
 <p>Bits Received = 99976, Bit errors = 845, BEP = 8.45e-03</p>
 </div>
 </div>
+</div>
 
 
           </div>
@@ -190,8 +205,10 @@ in the scikit-dsp-comm toolbox:</p>
 <h3>Navigation</h3>
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installing-rs-fec-conv">Installing rs_fec_conv</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#rust-installing">Rust Installing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#package-requirements">Package Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rs-fec-conv-install">rs_fec_conv Install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a></li>
 </ul>
 </li>
@@ -206,13 +223,11 @@ in the scikit-dsp-comm toolbox:</p>
 </ul>
 </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
     </form>
     </div>
 </div>
@@ -233,7 +248,7 @@ in the scikit-dsp-comm toolbox:</p>
       &copy;2020, Benjamin Roepken.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

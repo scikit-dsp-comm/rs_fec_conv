@@ -26,12 +26,12 @@ This package requires Python 3.7.x.
 rs_fec_conv Install
 ======================
 
-You can download the package rs_fec_conv from PyPi `PyPi <https://pypi.org/project/rs_fec_conv/),>`_,
+You can download the package rs_fec_conv from `PyPi <https://pypi.org/project/rs_fec_conv>`_,
 or by the command::
 
   pip install rs_fec_conv
   
-The rs_fec_package can also be downloaded from conda `conda <https://www.rust-lang.org/tools/install>`_,
+The rs_fec_package can also be downloaded from `conda <https://www.rust-lang.org/tools/install>`_,
 or by the command::
 	
   conda install rs_fec_conv

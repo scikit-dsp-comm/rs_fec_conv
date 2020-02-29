@@ -2,7 +2,7 @@
 
 
 ***************
-Getting started
+Getting Started
 ***************
 
 The package rs_fec_conv is a rust binding built with `pyo3 <https://github.com/PyO3/pyo3>`_.
@@ -10,22 +10,28 @@ rs_fec_conv is intended to be used in parallel with the
 `scikit-dsp-comm <https://github.com/mwickert/scikit-dsp-comm>`_ package.
 The rust binding improve the processing time of the conv_encoder and viterbi_decoder algorithms.
 
+Rust Installing
+===============
+
 Rust is not needed on the system to execute the binaries since the functions are already pre-compiled.
 Although, `Rust <https://www.rust-lang.org/tools/install>`_. can be downloaded online or 
 installed on Windows Subsystem for Linux by::
 
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
+Package Requirements
+====================
+This package requires Python 3.7.x.
 
-Installing rs_fec_conv
+rs_fec_conv Install
 ======================
 
-You can download the package rs_fec_conv from PiPy `PiPy <https://www.rust-lang.org/tools/install>`_,
+You can download the package rs_fec_conv from `PyPi <https://pypi.org/project/rs_fec_conv>`_,
 or by the command::
 
   pip install rs_fec_conv
   
-The rs_fec_package can also be downloaded from conda `conda <https://www.rust-lang.org/tools/install>`_,
+The rs_fec_package can also be downloaded from `conda <https://www.rust-lang.org/tools/install>`_,
 or by the command::
 	
   conda install rs_fec_conv
@@ -34,6 +40,9 @@ or by the command::
 
 Tutorial
 ========
+
+Convolutional Encoder
+---------------------
 
 The function conv_encoder_rs can be implemented by::
 
@@ -75,6 +84,9 @@ The function conv_encoder_rs can be implemented by::
 
    Convolutionally Encoded Signal
 
+Viterbi Decoder
+---------------
+
 The function viterbi_decoder_rs can be implemented by::
 
 	# Viterbi decode
@@ -105,6 +117,9 @@ The function viterbi_decoder_rs can be implemented by::
 
 Since there is no channel noise added to the signal the Viterbi decoded signal results
 in no bit errors from the original signal.   
+
+Channel Simulation
+------------------
 
 A simulation using AWGN can be done using by integrating with other functions provided 
 in the scikit-dsp-comm toolbox::
