@@ -7,8 +7,6 @@ description="Convolutional Encoder and Viterbi Decoder built with Rust bindings 
 readme="README.md"
 repository="https://github.com/grayfox57/rs_fec_conv"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [package.metadata.maturin]
 requires-dist = []
 
