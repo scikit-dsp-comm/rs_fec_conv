@@ -27,13 +27,7 @@ or by the command
 pip install rs_fec_conv
 ``` 
 
-The rs_fec_package can also be downloaded from conda [conda](https://www.rust-lang.org/tools/install),
-or by the command
-```bash	
-conda install rs_fec_conv
-```
-
-Note: The preferred method is to download from either PyPi or conda. 
+Note: The preferred method is to download from PyPi. 
 If downloading directly from GitHub you will need to install Rust prior.
 
 ## Tutorial
