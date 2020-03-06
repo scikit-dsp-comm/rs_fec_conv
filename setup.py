@@ -127,7 +127,7 @@ install_requires = []
 
 setup(
     name="rs_fec_conv",
-    version="0.3.4",
+    version="0.4.0",
 	author="Benjamin Roepken",
 	author_email="broepken57@hotmail.com",
 	url="https://github.com/grayfox57/rs_fec_conv",
