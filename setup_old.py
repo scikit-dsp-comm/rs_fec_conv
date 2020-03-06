@@ -73,7 +73,6 @@ class PostInstallCommand(install):
             os.path.join(self.root or self.install_lib, "maturin"),
         )
 
-
 class CargoModifiedSdist(SdistCommand):
     """Modifies Cargo.toml to use an absolute rather than a relative path
 
@@ -123,11 +122,15 @@ class PyTest(TestCommand):
 
 setup_requires = ["setuptools-rust>=0.10.1", "wheel"]
 install_requires = []
+tests_r
+
+setup_requires = ["setuptools-rust>=0.10.1", "wheel", "toml~=0.10.0"]
+install_requires = []
 tests_require = install_requires + ["pytest", "pytest-benchmark"]
 
 setup(
     name="rs_fec_conv",
-    version="0.3.1",
+    version="0.3.01",
 	author="Benjamin Roepken",
 	author_email="broepken57@hotmail.com",
 	url="https://github.com/grayfox57/rs_fec_conv",
@@ -150,5 +153,5 @@ setup(
     setup_requires=setup_requires,
     include_package_data=True,
     zip_safe=False,
-    cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel, "test": PyTest, "sdist": CargoModifiedSdist},
+    cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel},
 )

@@ -1,0 +1,26 @@
+# Workaround to bootstrap maturin on non-manylinux platforms
+[build-system]
+requires = ["setuptools~=41.2.0", "wheel~=0.33.6"]
+build-backend = "setuptools.build_meta"
+
+[tool.maturin]
+bindings = "bin"
+
+[tool.black]
+target_version = ['py37']
+include = '\.pyi?$'
+exclude = '''
+(
+  /(
+      \.eggs
+    | \.git
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | venv
+    | .*/venv.*
+    | target
+    | dist
+  )/
+)
+'''
