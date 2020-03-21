@@ -1,7 +1,0 @@
-setup.py
-rs_fec_conv/__init__.py
-rs_fec_conv.egg-info/PKG-INFO
-rs_fec_conv.egg-info/SOURCES.txt
-rs_fec_conv.egg-info/dependency_links.txt
-rs_fec_conv.egg-info/not-zip-safe
-rs_fec_conv.egg-info/top_level.txt
