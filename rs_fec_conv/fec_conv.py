@@ -58,58 +58,9 @@ import matplotlib.pyplot as plt
 import scipy.special as special
 from sys import exit
 import warnings
-from .digitalcom import Q_fctn
+from sk_dsp_comm.digitalcom import Q_fctn
+from sk_dsp_comm.fec_conv import trellis_nodes, trellis_branches, trellis_paths, binary, conv_Pb_bound, hard_Pk, soft_Pk
 import rs_fec_conv
-
-# Data structure support classes
-class trellis_nodes(object):
-    """
-    A structure to hold the trellis from nodes and to nodes.
-    Ns is the number of states = :math:`2^{(K-1)}`.
-    """
-    def __init__(self,Ns):
-        self.Ns = Ns
-        self.fn = np.zeros((Ns,1),dtype=int) 
-        self.tn = np.zeros((Ns,1),dtype=int)
-        self.out_bits = np.zeros((Ns,1),dtype=int)
-
-class trellis_branches(object):
-    """
-    A structure to hold the trellis states, bits, and input values
-    for both '1' and '0' transitions.
-    Ns is the number of states = :math:`2^{(K-1)}`.
-    """
-    def __init__(self,Ns):
-        self.Ns = Ns
-        self.states1 = np.zeros((Ns,1),dtype=int)
-        self.states2 = np.zeros((Ns,1),dtype=int)
-        self.bits1 = np.zeros((Ns,1),dtype=int)
-        self.bits2 = np.zeros((Ns,1),dtype=int)
-        self.input1 = np.zeros((Ns,1),dtype=int)
-        self.input2 = np.zeros((Ns,1),dtype=int)
-
-class trellis_paths(object):
-    """
-    A structure to hold the trellis paths in terms of traceback_states,
-    cumulative_metrics, and traceback_bits. A full decision depth history
-    of all this infomation is not essential, but does allow the graphical
-    depiction created by the method traceback_plot().
-    Ns is the number of states = :math:`2^{(K-1)}` and D is the decision depth.
-    As a rule, D should be about 5 times K.
-
-    """
-    def __init__(self,Ns,D):
-        self.Ns = Ns
-        self.decision_depth = D
-        self.traceback_states = np.zeros((Ns,self.decision_depth),dtype=int)
-        self.cumulative_metric = np.zeros((Ns,self.decision_depth),dtype=float)
-        self.traceback_bits = np.zeros((Ns,self.decision_depth),dtype=int)
-
-def binary(num, length=8):
-        """
-        Format an integer to binary without the leading '0b'
-        """
-        return format(num, '0{}b'.format(length))
 
 class fec_conv(object):
     """
@@ -246,7 +197,7 @@ class fec_conv(object):
                 print('branch calculation error')
                 exit(1)
 
-    def viterbi_decoder(self,x,metric_type='soft',quant_level=3):
+    # def viterbi_decoder(self,x,metric_type='soft',quant_level=3):
         """
         A method which performs Viterbi decoding of noisy bit stream,
         taking as input soft bit values centered on +/-1 and returning 
@@ -470,7 +421,7 @@ class fec_conv(object):
         y = y[:k] # trim final length
         return y
 	
-    def viterbi_decoder_rs(self,x,metric_type='soft',quant_level=3):
+    def viterbi_decoder(self,x,metric_type='soft',quant_level=3):
         """
         A method which performs Viterbi decoding of noisy bit stream,
         taking as input soft bit values centered on +/-1 and returning 
@@ -691,7 +642,7 @@ class fec_conv(object):
             raise ValueError('Invalid metric type specified. Use soft, hard, or unquant')
         return distance 
 
-    def conv_encoder_rs(self,input,state):
+    def conv_encoder(self,input,state):
         """
         output, state = conv_encoder_rs(input,state)
         We get the 1/2 or 1/3 rate from self.rate
@@ -714,7 +665,7 @@ class fec_conv(object):
         
         return output, state
 		
-    def conv_encoder(self,input,state):
+    # def conv_encoder(self,input,state):
         """
         output, state = conv_encoder(input,state)
         We get the 1/2 or 1/3 rate from self.rate
@@ -1006,131 +957,3 @@ class fec_conv(object):
         plt.ylabel('State Index $0$ to -$2^{(K-1)}$')
         plt.title('Survivor Paths Traced Back From All %d States' % self.Nstates)
         plt.grid()
-
-def conv_Pb_bound(R,dfree,Ck,SNRdB,hard_soft,M=2):
-    """
-    Coded bit error probabilty
-
-    Convolution coding bit error probability upper bound
-    according to Ziemer & Peterson 7-16, p. 507
-    
-    Mark Wickert November 2014
-
-    Parameters
-    ----------
-    R: Code rate
-    dfree: Free distance of the code
-    Ck: Weight coefficient
-    SNRdB: Signal to noise ratio in dB
-    hard_soft: 0 hard, 1 soft, 2 uncoded
-    M: M-ary
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> from sk_dsp_comm import fec_conv as fec
-    >>> import matplotlib.pyplot as plt
-    >>> SNRdB = np.arange(2,12,.1)
-    >>> Pb = fec.conv_Pb_bound(1./2,10,[36, 0, 211, 0, 1404, 0, 11633],SNRdB,2)
-    >>> Pb_1_2 = fec.conv_Pb_bound(1./2,10,[36, 0, 211, 0, 1404, 0, 11633],SNRdB,1)
-    >>> Pb_3_4 = fec.conv_Pb_bound(3./4,4,[164, 0, 5200, 0, 151211, 0, 3988108],SNRdB,1)
-    >>> plt.semilogy(SNRdB,Pb)
-    >>> plt.semilogy(SNRdB,Pb_1_2)
-    >>> plt.semilogy(SNRdB,Pb_3_4)
-    >>> plt.axis([2,12,1e-7,1e0])
-    >>> plt.xlabel(r'$E_b/N_0$ (dB)')
-    >>> plt.ylabel(r'Symbol Error Probability')
-    >>> plt.legend(('Uncoded BPSK','R=1/2, K=7, Soft','R=3/4 (punc), K=7, Soft'),loc='best')
-    >>> plt.grid();
-    >>> plt.show()
-
-    Notes
-    -----
-    The code rate R is given by :math:`R_{s} = \\frac{k}{n}`.
-    Mark Wickert and Andrew Smit 2018
-    """
-    Pb = np.zeros_like(SNRdB)
-    SNR = 10.**(SNRdB/10.)
-
-    for n,SNRn in enumerate(SNR):
-        for k in range(dfree,len(Ck)+dfree):
-            if hard_soft == 0: # Evaluate hard decision bound
-                Pb[n] += Ck[k-dfree]*hard_Pk(k,R,SNRn,M)
-            elif hard_soft == 1: # Evaluate soft decision bound
-                Pb[n] += Ck[k-dfree]*soft_Pk(k,R,SNRn,M)
-            else: # Compute Uncoded Pe
-                if M == 2:
-                    Pb[n] = Q_fctn(np.sqrt(2.*SNRn))					
-                else:
-                    Pb[n] = 4./np.log2(M)*(1 - 1/np.sqrt(M))*\
-                            np.gaussQ(np.sqrt(3*np.log2(M)/(M-1)*SNRn));
-
-    return Pb
-
-def hard_Pk(k,R,SNR,M=2):
-    """
-    Pk = hard_Pk(k,R,SNR)
-    
-    Calculates Pk as found in Ziemer & Peterson eq. 7-12, p.505
-    
-    Mark Wickert and Andrew Smit 2018
-    """
-
-    k = int(k)
-
-    if M == 2:
-        p = Q_fctn(np.sqrt(2.*R*SNR))
-    else:
-        p = 4./np.log2(M)*(1 - 1./np.sqrt(M))*\
-            Q_fctn(np.sqrt(3*R*np.log2(M)/float(M-1)*SNR))
-    Pk = 0
-    #if 2*k//2 == k:
-    if np.mod(k,2) == 0:
-        for e in range(int(k/2+1),int(k+1)):
-            Pk += float(factorial(k))/(factorial(e)*factorial(k-e))*p**e*(1-p)**(k-e);
-        # Pk += 1./2*float(factorial(k))/(factorial(int(k/2))*factorial(int(k-k/2)))*\
-        #       p**(k/2)*(1-p)**(k//2);
-        Pk += 1./2*float(factorial(k))/(factorial(int(k/2))*factorial(int(k-k/2)))*\
-            p**(k/2)*(1-p)**(k/2);
-    elif np.mod(k,2) == 1:
-        for e in range(int((k+1)//2),int(k+1)):
-            Pk += factorial(k)/(factorial(e)*factorial(k-e))*p**e*(1-p)**(k-e);
-    return Pk
-
-def soft_Pk(k,R,SNR,M=2):
-    """
-    Pk = soft_Pk(k,R,SNR)
-    
-    Calculates Pk as found in Ziemer & Peterson eq. 7-13, p.505
-    
-    Mark Wickert November 2014
-    """
-    if M == 2:
-        Pk = Q_fctn(np.sqrt(2.*k*R*SNR))
-    else:
-        Pk = 4./np.log2(M)*(1 - 1./np.sqrt(M))*\
-             Q_fctn(np.sqrt(3*k*R*np.log2(M)/float(M-1)*SNR))
-    
-    return Pk
-
-if __name__ == '__main__':
-    #x = np.arange(12)
-    """
-    cc2 = fec_conv()
-    y = cc2.puncture(x,('011','101'))
-    z = cc2.depuncture(y,('011','101'))
-    #x = ss.m_seq(7)
-    """
-    x = [0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0,
-         1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1,
-         0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0,
-         0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 0, 1,
-         1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1,
-         0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1]
-    cc1 = fec_conv()
-    output, states = cc1.conv_encoder(x,'00')
-    y = cc1.viterbi_decoder(7*output,'three_bit')
-    
-    print('Xor of input/output bits:')
-    errors = np.int32(x[:80])^np.int32(y[:80])
-    print(errors)
