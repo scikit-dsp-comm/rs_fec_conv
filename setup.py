@@ -118,7 +118,7 @@ tests_require = install_requires + ["pytest", "pytest-benchmark"]
 
 setup(
     name="rs_fec_conv",
-    version="0.4.0",
+    version="0.4.4",
 	author="Benjamin Roepken",
 	author_email="broepken57@hotmail.com",
 	url="https://github.com/grayfox57/rs_fec_conv",

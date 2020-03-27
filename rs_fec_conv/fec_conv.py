@@ -436,6 +436,8 @@ class fec_conv(object):
         G = np.array([float(int(x, base=2)) for x in self.G_polys])
 		
         # Call Rust Function
+        if type(input) is list: 
+            input = np.asarray(input)
         output, state = rs_fec_conv.conv_encoder(input.astype(float), state, G)
         output = np.array(output)
         
