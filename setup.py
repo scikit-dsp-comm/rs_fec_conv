@@ -141,7 +141,7 @@ setup(
     setup_requires=setup_requires,
     include_package_data=True,
     zip_safe=False,
-    cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel, "test": PyTest, "sdist": CargoModifiedSdist},
-	#cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel},
+    #cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel, "test": PyTest, "sdist": CargoModifiedSdist},
+	cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel},
 	#cmdclass={"install": PostInstallCommand, "test": PyTest, "sdist": CargoModifiedSdist},
 )
