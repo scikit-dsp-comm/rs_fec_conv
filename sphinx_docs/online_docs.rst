@@ -38,8 +38,8 @@ Results
 =======
 
 +-------------------------------+-------------+-----------+------------+
-| BEP Simulation    EbN0=4      | Python Time | Rust Time | Rust Speed |
-| G, depth          100000 bits | (sec)       | (sec)     | Increase   |
+| BEP Simulation (EbN0=4,100000 | Python Time | Rust Time | Rust Speed |
+| bits)  G, depth               | (sec)       | (sec)     | Increase   |
 +===============================+=============+===========+============+
 | ('111', '101'), 10            | 39.88       | 0.79      | 50.24      |
 +-------------------------------+-------------+-----------+------------+
@@ -60,7 +60,7 @@ The function conv_encoder_rs can be implemented by::
 
 	import numpy as np
 	import matplotlib.pyplot as plt
-	import sk_dsp_comm.rs_fec_conv as fec
+	import sk_dsp_comm.rs_fec_conv as rs_fec
 	
 	# Generate random data
 	N = 20
@@ -69,11 +69,11 @@ The function conv_encoder_rs can be implemented by::
 	# Initialize fec_conv object with either G length 2 or 3
 	G =('111','101')
 	# G = ('11110111','11011001','10010101')
-	cc1 = fec.fec_conv(G,10)
+	cc1 = rs_fec.fec_conv(G,10)
 	state = '00'
 
 	# Convolutionally Encode Signal
-	y,state = cc1.conv_encoder_rs(x,state)
+	y,state = cc1.conv_encoder(x,state)
 
 	# Plot input signal
 	subplot(211)
@@ -102,7 +102,7 @@ Viterbi Decoder
 The function viterbi_decoder_rs can be implemented by::
 
 	# Viterbi decode
-	z = cc1.viterbi_decoder_rs(y.astype(int), 'hard', 3)
+	z = cc1.viterbi_decoder(y.astype(int), 'hard', 3)
 
 	# Plot input signal
 	subplot(211)
@@ -141,20 +141,20 @@ in the scikit-dsp-comm toolbox::
 	EbN0 = 4
 	total_bit_errors = 0
 	total_bit_count = 0
-	cc1 = fec.fec_conv(('11101','10011'),25)
+	cc1 = rs_fec.fec_conv(('11101','10011'),25)
 
 	# Encode with shift register starting state of '0000'
 	state = '0000'
 	while total_bit_errors < 100:
 		# Create 100000 random 0/1 bits
 		x = randint(0,2,N_bits_per_frame)
-		y,state = cc1.conv_encoder_rs(x,state)
+		y,state = cc1.conv_encoder(x,state)
 
 		# Add channel noise to bits, include antipodal level shift to [-1,1]
 		# Channel SNR is 3 dB less for rate 1/2
 		yn_soft = dc.cpx_AWGN(2*y-1,EbN0-3,1) 
 		yn_hard = ((np.sign(yn_soft.real)+1)/2).astype(int)
-		z = cc1.viterbi_decoder_rs(yn_hard,'hard')
+		z = cc1.viterbi_decoder(yn_hard,'hard')
 
 		# Count bit errors
 		bit_count, bit_errors = dc.bit_errors(x,z)
