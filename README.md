@@ -30,6 +30,15 @@ pip install rs_fec_conv
 Note: The preferred method is to download from PyPi. 
 If downloading directly from GitHub you will need to install Rust prior.
 
+### Results
+| BEP Simulation (EbN0=4,100000 | Python Time | Rust Time | Rust Speed |
+| bits)  G, depth               | (sec)       | (sec)     | Increase   |
+| ----------------------------- | ----------- | --------- | ---------- |
+| ('111', '101'), 10            | 39.88       | 0.79      | 50.24      |
+| ('11111','11011','10101'), 25 | 675.00      | 21.32     | 31.66      |
+| ('1111001','1011011'), 25     | 217.02      | 9.27      | 23.41      |
+
+
 ## Tutorial
 
 ### Convolutional Encoder
