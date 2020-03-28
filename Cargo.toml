@@ -1,6 +1,6 @@
 [package]
 name = "rs_fec_conv"
-version = "0.4.4"
+version = "0.4.5"
 authors = ["Benjamin Roepken <broepken57@hotmail.com>"]
 edition = "2018"
 description="Convolutional Encoder and Viterbi Decoder built with Rust bindings for integration with Python"
