@@ -27,38 +27,38 @@ except ImportError:
     bdist_wheel = None
 
 
-class PostInstallCommand(install):
-    """Post-installation for installation mode."""
+# class PostInstallCommand(install):
+#     """Post-installation for installation mode."""
 
-    def run(self):
-        source_dir = os.path.dirname(os.path.abspath(__file__))
-        executable_name = "maturin.exe" if sys.platform.startswith("win") else "maturin"
+#     def run(self):
+#         source_dir = os.path.dirname(os.path.abspath(__file__))
+#         executable_name = "maturin.exe" if sys.platform.startswith("win") else "maturin"
 
-        # Shortcut for development
-        existing_binary = os.path.join(source_dir, "target", "debug", executable_name)
-        if os.path.isfile(existing_binary):
-            source = existing_binary
-        else:
-            if not shutil.which("cargo"):
-                raise RuntimeError(
-                    "cargo not found in PATH. Please install rust "
-                    "(https://www.rust-lang.org/tools/install) and try again"
-                )
-            subprocess.check_call(
-                ["cargo", "rustc", "--bin", "maturin", "--", "-C", "link-arg=-s"]
-            )
-            source = os.path.join(source_dir, "target", "debug", executable_name)
-        # run this after trying to build with cargo (as otherwise this leaves
-        # venv in a bad state: https://github.com/benfred/py-spy/issues/69)
-        install.run(self)
+#         # Shortcut for development
+#         existing_binary = os.path.join(source_dir, "target", "debug", executable_name)
+#         if os.path.isfile(existing_binary):
+#             source = existing_binary
+#         else:
+#             if not shutil.which("cargo"):
+#                 raise RuntimeError(
+#                     "cargo not found in PATH. Please install rust "
+#                     "(https://www.rust-lang.org/tools/install) and try again"
+#                 )
+#             subprocess.check_call(
+#                 ["cargo", "rustc", "--bin", "maturin", "--", "-C", "link-arg=-s"]
+#             )
+#             source = os.path.join(source_dir, "target", "debug", executable_name)
+#         # run this after trying to build with cargo (as otherwise this leaves
+#         # venv in a bad state: https://github.com/benfred/py-spy/issues/69)
+#         install.run(self)
 
-        target = os.path.join(self.install_scripts, executable_name)
-        os.makedirs(self.install_scripts, exist_ok=True)
-        self.copy_file(source, target)
-        self.copy_tree(
-            os.path.join(source_dir, "maturin"),
-            os.path.join(self.root or self.install_lib, "maturin"),
-        )
+#         target = os.path.join(self.install_scripts, executable_name)
+#         os.makedirs(self.install_scripts, exist_ok=True)
+#         self.copy_file(source, target)
+#         self.copy_tree(
+#             os.path.join(source_dir, "maturin"),
+#             os.path.join(self.root or self.install_lib, "maturin"),
+#         )
 
 
 # class CargoModifiedSdist(SdistCommand):
@@ -142,6 +142,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     #cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel, "test": PyTest, "sdist": CargoModifiedSdist},
-	cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel},
+	cmdclass={"bdist_wheel": bdist_wheel},
+	#cmdclass={"install": PostInstallCommand, "bdist_wheel": bdist_wheel},
 	#cmdclass={"install": PostInstallCommand, "test": PyTest, "sdist": CargoModifiedSdist},
 )
